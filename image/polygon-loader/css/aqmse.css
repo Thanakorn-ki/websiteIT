@@ -1,0 +1,279 @@
+//////////////////////////////
+// Useful SASS Functions
+//////////////////////////////
+
+// Random Number (http://xkcd.com/221)
+@function rand() {
+  @return 4;
+}
+
+// Strip Units
+@function strip-units($number) {
+  @return $number / ($number * 0 + 1);
+}
+
+// Square Root
+@function sqrt($number) {
+  $guess: rand();
+  $root: $guess;
+  @for $i from 1 through 50 {
+    $root: $root - (($root * $root) - $number) / (2 * $root);
+  }
+  @return $root;
+}
+
+// DEPRECATED - Remove this, too complicated
+// ---
+// map-fetch($map, $keys)
+// ---
+// An easy way to fetch a deep value in a multi-level map. Works much like
+// map-get() except that you pass multiple keys as the second parameter to
+// go down multiple levels in the nested map.
+@function map-fetch($map, $keys) {
+  $key: nth($keys, 1);
+  $length: length($keys);
+  $value: map-get($map, $key);
+  @if ($length > 1) {
+    $rest: ();
+    @for $i from 2 through $length {
+      $rest: append($rest, nth($keys, $i))
+    }
+    @return map-fetch($value, $rest)
+  } @else {
+    @return $value;
+  }
+}
+
+// Test if map got all `$keys` at root level
+// ---
+// @param [map] $map: map
+// @param [argList] $keys: keys to test
+// ---
+// @return [bool]
+// ---
+@function map-has-keys($map, $keys...) {
+  @each $key in $keys {
+    @if not map-has-key($map, $key) {
+      @return false;
+    }
+  }
+  
+  @return true;
+}
+
+// Test if map got all `$keys` nested with each others
+// ---
+// @param [map] $map: map
+// @param [argList] $keys: keys to test
+// ---
+// @return [bool]
+// ---
+@function map-has-nested-keys($map, $keys...) {
+  @each $key in $keys {
+    @if not map-has-key($map, $key) {
+      @return false;
+    }
+    $map: map-get($map, $key);
+  }
+  
+  @return true;
+}
+
+// Fetch nested keys
+// ---
+// @param [map] $map: map
+// @param [argList] $keys: keys to fetch
+// ---
+// @return [literal]
+// ---
+@function map-deep-get($map, $keys...) {
+  @each $key in $keys {
+    $map: map-get($map, $key);
+  }
+
+  @return $map;
+}
+
+
+@function create-map($args...) {
+  @return keywords($args);
+}
+
+
+//////////////////////////////
+// Imports
+//////////////////////////////
+
+@import url(http://fonts.googleapis.com/css?family=Roboto);
+
+
+//////////////////////////////
+// Variables
+//////////////////////////////
+
+$black:   #000;
+$gray-01: lighten($black, 10%);
+$gray-02: lighten($black, 20%);
+$gray-03: lighten($black, 30%);
+$gray-04: lighten($black, 40%);
+$gray-05: lighten($black, 50%);
+$gray-06: lighten($black, 60%);
+$gray-07: lighten($black, 70%);
+$gray-08: lighten($black, 80%);
+$gray-09: lighten($black, 90%);
+$gray-10: lighten($black, 95%);
+$white:   #fff;
+
+$pink: #e83c6b;
+$blue: #5d91ff;
+$red: #eb1b17;
+$purple: #8b0bd4;
+$green: #bada55;
+
+$base-font: 'Roboto', sans-serif;
+
+
+//////////////////////////////
+// Placeholders
+//////////////////////////////
+
+%visually-hidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+
+//////////////////////////////
+// Mixins
+//////////////////////////////
+
+// SexyGrid v4.0
+// Improved version of http://codepen.io/cmegown/pen/mjcbk built in collaboration with @cmegown.
+
+@mixin createGrid($columns: 1, $gutter: false) {
+  $gutterParameterCount: length($gutter);
+  
+  @include clearfix;
+
+  // If $gutter is defined and there is one parameter
+  @if $gutter and ($gutterParameterCount == 1) {
+    margin: -($gutter / 2);
+    
+    > li {
+      float: left;
+      width: (100% / $columns);
+      padding: ($gutter / 2);
+    }
+  }
+
+  // If $gutter is defined and there are multiple parameters defined
+  @else if $gutter and ($gutterParameterCount > 1) {
+    $rowGutter: (nth($gutter, 1) / 2) + 0; // + 0 to allow math
+    $columnGutter: (nth($gutter, 2) / 2) + 0; // + 0 to allow math
+    margin: -#{$rowGutter} -#{$columnGutter}; // Interpolate to allow negative value
+  
+    > li {
+      float: left;
+      width: (100% / $columns);
+      padding: $rowGutter $columnGutter;
+    }
+  }
+
+  // If only $columns is defined
+  @else {
+    > li {
+      float: left;
+      width: (100% / $columns);
+    }
+  }
+}
+
+@mixin updateGrid($columns: false, $gutter: false) {
+  $gutterParameterCount: length($gutter);
+  
+  // If $gutter is defined and there is one parameter
+  @if $gutter and ($gutterParameterCount == 1) {
+    margin: -($gutter / 2);
+    
+    > li {
+      @if $columns { width: (100% / $columns); }
+      padding: ($gutter / 2);
+    }
+  }
+
+  // If $gutter is defined and there are multiple parameters defined
+  @else if $gutter and ($gutterParameterCount > 1) {
+      $rowGutter: (nth($gutter, 1) / 2) + 0; // + 0 to allow math
+      $columnGutter: (nth($gutter, 2) / 2) + 0; // + 0 to allow math
+    
+      margin: -#{$rowGutter} -#{$columnGutter}; // Interpolate to allow negative value
+
+      > li {
+        @if $columns { width: (100% / $columns); }
+        padding: $rowGutter $columnGutter;
+      }
+  }
+
+  // If only $columns is defined
+  @else {
+    > li { width: (100% / $columns); }
+  }
+}
+
+
+// Opacity For IE8
+@mixin opacity($opacity) {
+  $ms-opacity: $opacity * 100;
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$ms-opacity})';
+  filter: alpha(opacity=#{$ms-opacity});
+  opacity: $opacity;
+}
+
+// Media query mixin
+@mixin mq($value, $property: 'min-width', $media: 'screen') {
+    @media #{$media} and ($property: $value) {
+        @content;
+    }
+}
+
+// Nifty clearfix by @cmegown
+@mixin clearfix($pseudo: after) {
+  &:#{$pseudo} {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+//////////////////////////////
+// Resets
+//////////////////////////////
+
+*,
+*:before,
+*:after { box-sizing: border-box; }
+
+html {
+  height: 100%;
+  margin: 0;
+  color: $gray-01;
+  font-size: 62.5%;
+  font-family: $base-font;
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+}
+
+a { text-decoration: none; }
+
+p { line-height: 1.4; }

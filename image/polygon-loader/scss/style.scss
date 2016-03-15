@@ -1,0 +1,204 @@
+@import "bourbon";
+
+html { background-color: #e7e7e2; }
+
+// Not being pulled in from my base import file... not sure why
+@function strip-units($number) {
+  @return $number / ($number * 0 + 1);
+}
+
+//////////////////////////////
+// Variables
+//////////////////////////////
+
+$red-01: #210008;
+$red-02: #520019;
+$red-03: #7b0029;
+$red-04: #a5003a;
+$red-05: #d6004a;
+$red-06: #ff0052;
+
+$size: 128px; // 30px is the original size of the Polygon loader, but can be resized to basically anything
+$unit: unit($size);
+
+$totalWidth: $size;
+$totalHeight: ($size * 1.5);
+
+$topOffset: ($size / 2);
+$leftOffset: ($size / 2);
+
+$borderWidth: ($size / 2);
+
+// Just change the transform origin?!?!
+$specialBorderWidth: ceil((sqrt((strip-units($borderWidth) * strip-units($borderWidth)) + (strip-units($borderWidth) * strip-units($borderWidth)) ) / 2)) + $unit;
+
+//////////////////////////////
+// Keyframe Animations
+//////////////////////////////
+
+@keyframes type-01 {
+  0% {
+    border-top-width: 0;
+    border-right-width: $borderWidth;
+    border-bottom-width: $borderWidth;
+    border-left-width: 0;
+  }
+
+  40% {
+    border-top-width: 0;
+    border-right-width: $borderWidth;
+    border-bottom-width: $borderWidth;
+    border-left-width: 0;
+  }
+
+  45% {
+    border-top-width: $borderWidth;
+    border-right-width: $borderWidth;
+    border-bottom-width: $borderWidth;
+    border-left-width: 0;
+  }
+
+  100% {
+    border-top-width: $borderWidth;
+    border-right-width: $borderWidth;
+    border-bottom-width: $borderWidth;
+    border-left-width: 0;
+  }
+}
+
+@keyframes type-02 {
+  0% {
+    border-top-width: 0;
+    border-right-width: #{$specialBorderWidth};
+    border-bottom-width: #{$specialBorderWidth};
+    border-left-width: #{$specialBorderWidth};
+  }
+
+  40% {
+    border-top-width: 0;
+    border-right-width: #{$specialBorderWidth};
+    border-bottom-width: #{$specialBorderWidth};
+    border-left-width: #{$specialBorderWidth};
+  }
+
+  45% {
+    border-top-width: #{$specialBorderWidth};
+    border-right-width: #{$specialBorderWidth};
+    border-bottom-width: #{$specialBorderWidth};
+    border-left-width: #{$specialBorderWidth};
+  }
+
+  100% {
+    border-top-width: #{$specialBorderWidth};
+    border-right-width: #{$specialBorderWidth};
+    border-bottom-width: #{$specialBorderWidth};
+    border-left-width: #{$specialBorderWidth};
+  }
+}
+
+@keyframes type-03 {
+  0% {
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: $borderWidth;
+    border-left-width: $borderWidth;
+  }
+
+  40% {
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: $borderWidth;
+    border-left-width: $borderWidth;
+  }
+
+  45% {
+    border-top-width: $borderWidth;
+    border-right-width: 0;
+    border-bottom-width: $borderWidth;
+    border-left-width: $borderWidth;
+  }
+
+  100% {
+    border-top-width: $borderWidth;
+    border-right-width: 0;
+    border-bottom-width: $borderWidth;
+    border-left-width: $borderWidth;
+  }
+}
+
+
+//////////////////////////////
+// The Meat
+//////////////////////////////
+
+.polygon-loader { 
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: (-$totalHeight / 2) 0 0 (-$totalWidth / 2);
+  height: $totalHeight;
+  width: $totalWidth;
+  
+  div {
+    position: absolute;
+    top: $topOffset;
+    left: $leftOffset;
+    border: 0 solid transparent;
+    
+    transform-origin: left top;
+    animation-duration: .52s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: steps(4);
+  }
+
+  div:nth-of-type(1) {
+    border-top-color: $red-01;
+    @include transform(rotate(-180deg));
+    
+    animation-name: type-01;
+  }
+
+  div:nth-of-type(2) {
+    border-top-color: $red-02;
+    @include transform(rotate(-90deg));
+  
+    animation-name: type-01;
+    animation-delay: .08s;
+  }
+
+  div:nth-of-type(3) {
+    border-top-color: $red-03;
+    @include transform(rotate(0));
+    
+    animation-name: type-01;
+    animation-delay: .12s;
+  }
+
+  div:nth-of-type(4) {
+    border-top-color: $red-04;
+    @include transform(rotate(90deg));
+    
+    animation-name: type-01;
+    animation-delay: .16s;
+  }
+  
+  div:nth-of-type(5) {
+    left: 0;
+    border-top-color: $red-05;
+    @include transform(rotate(45deg));
+    
+    animation-name: type-02;
+    animation-delay: .24s;
+  }
+  
+  div:nth-of-type(6) {
+    top: ($topOffset * 2);
+    left: 0;
+    border-top-color: $red-06;
+    @include transform(rotate(0));
+    
+    animation-name: type-03;
+    animation-delay: .28s;
+  }
+}
